@@ -16,9 +16,9 @@ public abstract class TwitchBot extends PircBot
 	public static final String VERSION = "0.1";
 	public static final JsonParser PARSER = new JsonParser();
 
-	private String clientID;
-	private String botName;
-	private String oAuth;
+	protected String clientID;
+	protected String botName;
+	protected String oAuth;
 
 	private boolean connected = false;
 	private StreamCheckThread streamcheck;
@@ -26,13 +26,6 @@ public abstract class TwitchBot extends PircBot
 	private List<String> watchedChannels = new ArrayList<String>();
 	private Map<String, String> idToChannelName = new HashMap<String, String>();
 	private Map<String, String> channelNameToID = new HashMap<String, String>();
-
-	public TwitchBot(String clientID, String name, String oAuth)
-	{
-		this.clientID = clientID;
-		this.botName = name;
-		this.oAuth = oAuth;
-	}
 
 	public void onMessage(String channel, String sender, String login, String hostname, String message)
 	{
