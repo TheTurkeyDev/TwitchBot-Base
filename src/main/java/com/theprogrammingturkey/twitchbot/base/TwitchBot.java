@@ -205,7 +205,7 @@ public abstract class TwitchBot extends PircBot
 		return "";
 	}
 
-	public abstract void log(String message);
+	public abstract void logInfo(String message);
 
 	public abstract void logError(String error);
 }
