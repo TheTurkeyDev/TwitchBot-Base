@@ -105,7 +105,7 @@ public abstract class TwitchBot extends PircBot
 			return "";
 
 		if(channel.startsWith("#"))
-			channel = this.getChannelID(channel.substring(1));
+			channel = this.getChannelID(channel);
 
 		if(channel.equals("") || this.connectChannels.contains(channel))
 			return "";
@@ -118,7 +118,7 @@ public abstract class TwitchBot extends PircBot
 	public String disconnectFromChannel(String channel)
 	{
 		if(channel.startsWith("#"))
-			channel = getChannelID(channel.substring(1));
+			channel = getChannelID(channel);
 
 		partChannel(this.getChannelNameFromID(channel));
 		this.connectChannels.remove(channel);
@@ -138,7 +138,7 @@ public abstract class TwitchBot extends PircBot
 	public String addWatchedChannel(String channel)
 	{
 		if(channel.startsWith("#"))
-			channel = getChannelID(channel.substring(1));
+			channel = getChannelID(channel);
 
 		this.watchedChannels.add(channel);
 		return channel;
@@ -147,7 +147,7 @@ public abstract class TwitchBot extends PircBot
 	public String removeWatchedChannel(String channel)
 	{
 		if(channel.startsWith("#"))
-			channel = getChannelID(channel.substring(1));
+			channel = getChannelID(channel);
 		this.watchedChannels.remove(channel);
 		return channel;
 	}
@@ -165,7 +165,7 @@ public abstract class TwitchBot extends PircBot
 	public boolean isConnectedToChannel(String channel)
 	{
 		if(channel.startsWith("#"))
-			channel = getChannelID(channel.substring(1));
+			channel = getChannelID(channel);
 		return this.connectChannels.contains(channel);
 	}
 
