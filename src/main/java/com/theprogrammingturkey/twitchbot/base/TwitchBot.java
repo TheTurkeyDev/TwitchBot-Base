@@ -61,7 +61,7 @@ public abstract class TwitchBot extends PircBot
 		connectToTwitch();
 	}
 
-	private boolean connectToTwitch()
+	public boolean connectToTwitch()
 	{
 		setName(this.botName);
 		try
@@ -81,6 +81,20 @@ public abstract class TwitchBot extends PircBot
 		this.streamcheck.initCheckThread();
 		connectToChannel("32907202");
 		return true;
+	}
+	
+	public void disconnectFromTwitch()
+	{
+		if (this.isConnected()) {
+			disconnect();
+			this.connected = false;
+			this.streamcheck.stopThread();
+			for (int i = 0; i < this.connectChannels.size(); i++) {
+				String c = (String) this.connectChannels.get(i);
+				disconnectFromChannel(c);
+			}
+			this.connectChannels.clear();
+		}
 	}
 
 	public void connectToChannel(String channel)
