@@ -82,14 +82,16 @@ public abstract class TwitchBot extends PircBot
 		connectToChannel("32907202");
 		return true;
 	}
-	
+
 	public void disconnectFromTwitch()
 	{
-		if (this.isConnected()) {
+		if(this.isConnected())
+		{
 			disconnect();
 			this.connected = false;
 			this.streamcheck.stopThread();
-			for (int i = 0; i < this.connectChannels.size(); i++) {
+			for(int i = 0; i < this.connectChannels.size(); i++)
+			{
 				String c = (String) this.connectChannels.get(i);
 				disconnectFromChannel(c);
 			}
@@ -97,28 +99,30 @@ public abstract class TwitchBot extends PircBot
 		}
 	}
 
-	public void connectToChannel(String channel)
+	public String connectToChannel(String channel)
 	{
 		if(!this.connected)
-			return;
+			return "";
 
 		if(channel.startsWith("#"))
 			channel = this.getChannelID(channel.substring(1));
 
 		if(channel.equals("") || this.connectChannels.contains(channel))
-			return;
-		
+			return "";
+
 		joinChannel(this.getChannelNameFromID(channel));
 		this.connectChannels.add(channel);
+		return channel;
 	}
 
-	public void disconnectFromChannel(String channel)
+	public String disconnectFromChannel(String channel)
 	{
 		if(channel.startsWith("#"))
 			channel = getChannelID(channel.substring(1));
 
 		partChannel(this.getChannelNameFromID(channel));
 		this.connectChannels.remove(channel);
+		return channel;
 	}
 
 	public String capitalizeName(String name)
@@ -131,19 +135,21 @@ public abstract class TwitchBot extends PircBot
 		return this.connected;
 	}
 
-	public void addWatchedChannel(String channel)
+	public String addWatchedChannel(String channel)
 	{
 		if(channel.startsWith("#"))
 			channel = getChannelID(channel.substring(1));
 
 		this.watchedChannels.add(channel);
+		return channel;
 	}
 
-	public void removeWatchedChannel(String channel)
+	public String removeWatchedChannel(String channel)
 	{
 		if(channel.startsWith("#"))
 			channel = getChannelID(channel.substring(1));
 		this.watchedChannels.remove(channel);
+		return channel;
 	}
 
 	public List<String> getConnectChannels()
