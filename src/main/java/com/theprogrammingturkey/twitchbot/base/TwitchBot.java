@@ -176,6 +176,9 @@ public abstract class TwitchBot extends PircBot
 
 	public Integer getChannelID(String channel)
 	{
+		if(channel.startsWith("#"))
+			channel = channel.substring(1);
+
 		if(this.channelNameToID.containsKey(channel))
 			return this.channelNameToID.get(channel);
 
