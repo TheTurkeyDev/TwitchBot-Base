@@ -155,10 +155,10 @@ public abstract class TwitchBot extends PircBot
 	public String getChannelNameFromID(Integer id)
 	{
 		return this.idToChannelName.computeIfAbsent(id, (key) -> {
+			WebRequestBuilder request = new WebRequestBuilder("https://api.twitch.tv/kraken/users/" + id);
 			String response = "NONE";
 			try
 			{
-				WebRequestBuilder request = new WebRequestBuilder("https://api.twitch.tv/kraken/users/" + id);
 				request.addURLProp("client_id", this.clientID);
 				request.addURLProp("api_version", "5");
 				response = request.executeRequest();
@@ -170,6 +170,7 @@ public abstract class TwitchBot extends PircBot
 			} catch(Exception e)
 			{
 				logError("Failed to get channel name for streamID: " + id);
+				logError("Request: " + request.getURL());
 				logError("Response text: " + response);
 			}
 			return "UNKNOWN";
@@ -184,10 +185,11 @@ public abstract class TwitchBot extends PircBot
 		if(this.channelNameToID.containsKey(channel))
 			return this.channelNameToID.get(channel);
 
+		WebRequestBuilder request = new WebRequestBuilder("https://api.twitch.tv/kraken/users");
 		String response = "NONE";
 		try
 		{
-			WebRequestBuilder request = new WebRequestBuilder("https://api.twitch.tv/kraken/users");
+
 			request.addURLProp("login", channel.substring(1));
 			request.addURLProp("client_id", this.clientID);
 			request.addURLProp("api_version", "5");
@@ -200,6 +202,7 @@ public abstract class TwitchBot extends PircBot
 		} catch(Exception e)
 		{
 			logError("Failed to get channel id for stream: " + channel);
+			logError("Request: " + request.getURL());
 			logError("Response text: " + response);
 			e.printStackTrace();
 		}

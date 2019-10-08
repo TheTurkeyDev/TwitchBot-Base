@@ -43,7 +43,7 @@
 		<dependency>
 			<groupId>com.theprogrammingturkey.volatiliaApi</groupId>
 			<artifactId>VolatiliaAPI-WebAccess</artifactId>
-			<version>0.2.5</version>
+			<version>0.2.6</version>
 		</dependency>
 	</dependencies>
 	<build>
