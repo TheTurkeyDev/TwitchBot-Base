@@ -166,7 +166,7 @@ public abstract class TwitchBot extends PircBot
 				String channelName = jsonresp.get("name").getAsString();
 				this.channelNameToID.put(channelName, id);
 				this.idToChannelName.put(id, channelName);
-				return "#" + channelName;
+				return channelName;
 			} catch(Exception e)
 			{
 				logError("Failed to get channel name for streamID: " + id);
