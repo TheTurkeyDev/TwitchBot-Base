@@ -154,7 +154,24 @@ public abstract class TwitchBot extends PircBot
 
 	public String getChannelNameFromID(Integer id)
 	{
-		return this.idToChannelName.getOrDefault(id, "UNKOWN");
+		return this.idToChannelName.computeIfAbsent(id, (key) -> {
+			try
+			{
+				WebRequestBuilder request = new WebRequestBuilder("https://api.twitch.tv/kraken/users/" + id);
+				request.addURLProp("client_id", this.clientID);
+				request.addURLProp("api_version", "5");
+				String result = request.executeRequest();
+				JsonObject jsonresp = PARSER.parse(result).getAsJsonObject();
+				String channelName = jsonresp.get("name").getAsString();
+				this.channelNameToID.put(channelName, id);
+				this.idToChannelName.put(id, channelName);
+				return "#" + channelName;
+			} catch(Exception e)
+			{
+				logError("Failed to get channel name for streamID: " + id);
+			}
+			return "UNKNOWN";
+		});
 	}
 
 	public Integer getChannelID(String channel)
