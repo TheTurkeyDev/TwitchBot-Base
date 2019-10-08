@@ -190,7 +190,7 @@ public abstract class TwitchBot extends PircBot
 		try
 		{
 
-			request.addURLProp("login", channel.substring(1));
+			request.addURLProp("login", channel);
 			request.addURLProp("client_id", this.clientID);
 			request.addURLProp("api_version", "5");
 			response = request.executeRequest();
