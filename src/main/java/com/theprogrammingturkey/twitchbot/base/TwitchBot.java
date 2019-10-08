@@ -22,10 +22,10 @@ public abstract class TwitchBot extends PircBot
 
 	private boolean connected = false;
 	private StreamCheckThread streamcheck;
-	private List<String> connectChannels = new ArrayList<String>();
-	private List<String> watchedChannels = new ArrayList<String>();
-	private Map<String, String> idToChannelName = new HashMap<String, String>();
-	private Map<String, String> channelNameToID = new HashMap<String, String>();
+	private List<Integer> connectChannels = new ArrayList<Integer>();
+	private List<Integer> watchedChannels = new ArrayList<Integer>();
+	private Map<Integer, String> idToChannelName = new HashMap<Integer, String>();
+	private Map<String, Integer> channelNameToID = new HashMap<String, Integer>();
 
 	public void onMessage(String channel, String sender, String login, String hostname, String message)
 	{
@@ -46,10 +46,7 @@ public abstract class TwitchBot extends PircBot
 		this.connected = false;
 		this.streamcheck.stopThread();
 		for(int i = 0; i < this.connectChannels.size(); i++)
-		{
-			String c = (String) this.connectChannels.get(i);
-			disconnectFromChannel(c);
-		}
+			disconnectFromChannel(this.connectChannels.get(i));
 		this.connectChannels.clear();
 		connectToTwitch();
 	}
@@ -72,7 +69,7 @@ public abstract class TwitchBot extends PircBot
 		this.connected = true;
 		this.streamcheck = new StreamCheckThread(10, this);
 		this.streamcheck.initCheckThread();
-		connectToChannel("32907202");
+		connectToChannel(32907202);
 		return true;
 	}
 
@@ -84,38 +81,27 @@ public abstract class TwitchBot extends PircBot
 			this.connected = false;
 			this.streamcheck.stopThread();
 			for(int i = 0; i < this.connectChannels.size(); i++)
-			{
-				String c = (String) this.connectChannels.get(i);
-				disconnectFromChannel(c);
-			}
+				disconnectFromChannel(this.connectChannels.get(i));
 			this.connectChannels.clear();
 		}
 	}
 
-	public String connectToChannel(String channel)
+	public void connectToChannel(Integer channelID)
 	{
 		if(!this.connected)
-			return "";
+			return;
 
-		if(channel.startsWith("#"))
-			channel = this.getChannelID(channel);
+		if(this.connectChannels.contains(channelID))
+			return;
 
-		if(channel.equals("") || this.connectChannels.contains(channel))
-			return "";
-
-		joinChannel(this.getChannelNameFromID(channel));
-		this.connectChannels.add(channel);
-		return channel;
+		joinChannel(this.getChannelNameFromID(channelID));
+		this.connectChannels.add(channelID);
 	}
 
-	public String disconnectFromChannel(String channel)
+	public void disconnectFromChannel(Integer channelID)
 	{
-		if(channel.startsWith("#"))
-			channel = getChannelID(channel);
-
-		partChannel(this.getChannelNameFromID(channel));
-		this.connectChannels.remove(channel);
-		return channel;
+		partChannel(this.getChannelNameFromID(channelID));
+		this.connectChannels.remove(channelID);
 	}
 
 	public String capitalizeName(String name)
@@ -128,43 +114,34 @@ public abstract class TwitchBot extends PircBot
 		return this.connected;
 	}
 
-	public String addWatchedChannel(String channel)
+	public void addWatchedChannel(Integer channelID)
 	{
-		if(channel.startsWith("#"))
-			channel = getChannelID(channel);
-
-		this.watchedChannels.add(channel);
-		return channel;
+		this.watchedChannels.add(channelID);
 	}
 
-	public String removeWatchedChannel(String channel)
+	public void removeWatchedChannel(Integer channelID)
 	{
-		if(channel.startsWith("#"))
-			channel = getChannelID(channel);
-		this.watchedChannels.remove(channel);
-		return channel;
+		this.watchedChannels.remove(channelID);
 	}
 
-	public List<String> getConnectChannels()
+	public List<Integer> getConnectChannels()
 	{
 		return this.connectChannels;
 	}
 
-	public List<String> getWatchedChannels()
+	public List<Integer> getWatchedChannels()
 	{
 		return this.watchedChannels;
 	}
 
-	public boolean isConnectedToChannel(String channel)
+	public boolean isConnectedToChannel(Integer channelID)
 	{
-		if(channel.startsWith("#"))
-			channel = getChannelID(channel);
-		return this.connectChannels.contains(channel);
+		return this.connectChannels.contains(channelID);
 	}
 
-	public List<String> getNonConnectedChannels()
+	public List<Integer> getNonConnectedChannels()
 	{
-		List<String> toReturn = new ArrayList<String>();
+		List<Integer> toReturn = new ArrayList<Integer>();
 		toReturn.addAll(this.watchedChannels);
 		toReturn.removeAll(this.connectChannels);
 		return toReturn;
@@ -175,12 +152,12 @@ public abstract class TwitchBot extends PircBot
 		return this.clientID;
 	}
 
-	public String getChannelNameFromID(String id)
+	public String getChannelNameFromID(Integer id)
 	{
-		return this.idToChannelName.getOrDefault(id, "");
+		return this.idToChannelName.getOrDefault(id, "UNKOWN");
 	}
 
-	public String getChannelID(String channel)
+	public Integer getChannelID(String channel)
 	{
 		if(this.channelNameToID.containsKey(channel))
 			return this.channelNameToID.get(channel);
@@ -193,7 +170,7 @@ public abstract class TwitchBot extends PircBot
 			request.addURLProp("api_version", "5");
 			String result = request.executeRequest();
 			JsonObject jsonresp = PARSER.parse(result).getAsJsonObject();
-			String id = jsonresp.getAsJsonArray("users").get(0).getAsJsonObject().get("_id").getAsString();
+			Integer id = Integer.parseInt(jsonresp.getAsJsonArray("users").get(0).getAsJsonObject().get("_id").getAsString());
 			this.channelNameToID.put(channel, id);
 			this.idToChannelName.put(id, channel);
 			return id;
@@ -202,7 +179,7 @@ public abstract class TwitchBot extends PircBot
 			logError("Failed to get channel id for stream: " + channel);
 			e.printStackTrace();
 		}
-		return "";
+		return -1;
 	}
 
 	public abstract void logInfo(String message);

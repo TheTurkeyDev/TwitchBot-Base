@@ -5,7 +5,7 @@
 
 	<groupId>com.theprogrammingturkey.twitchbotbase</groupId>
 	<artifactId>TwitchBot-Base</artifactId>
-	<version>0.1.${build.number}</version>
+	<version>1.0.${build.number}</version>
 	<packaging>jar</packaging>
 	<distributionManagement>
 		<repository>

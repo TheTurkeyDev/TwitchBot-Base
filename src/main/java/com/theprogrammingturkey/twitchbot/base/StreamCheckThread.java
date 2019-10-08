@@ -54,7 +54,7 @@ public class StreamCheckThread implements Runnable
 
 	private void checkStreams()
 	{
-		for(String stream : bot.getWatchedChannels())
+		for(Integer stream : bot.getWatchedChannels())
 		{
 			String result = "";
 			try
@@ -75,7 +75,7 @@ public class StreamCheckThread implements Runnable
 					if(!bot.isConnectedToChannel(stream))
 						bot.connectToChannel(stream);
 				}
-				else if((bot.isConnectedToChannel(stream)) && (!stream.equalsIgnoreCase("#turkey2349")))
+				else if((bot.isConnectedToChannel(stream)) && (stream != 32907202))
 				{
 					bot.disconnectFromChannel(stream);
 				}
