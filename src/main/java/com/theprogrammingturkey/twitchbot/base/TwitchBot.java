@@ -154,7 +154,7 @@ public abstract class TwitchBot extends PircBot
 
 	public String getChannelNameFromID(Integer id)
 	{
-		return this.idToChannelName.computeIfAbsent(id, (key) -> {
+		return "#" + this.idToChannelName.computeIfAbsent(id, (key) -> {
 			WebRequestBuilder request = new WebRequestBuilder("https://api.twitch.tv/kraken/users/" + id);
 			String response = "NONE";
 			try
